@@ -1,4 +1,8 @@
-# Mabe Utils
+[<img src="https://raulmabe.dev/favicon_io/favicon.ico" align="left" />](https://cli.vgv.dev/)
+
+### Mabe Utils
+
+<br clear="left"/>
 
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
 [![Powered by Mason](https://img.shields.io/endpoint?url=https%3A%2F%2Ftinyurl.com%2Fmason-badge)](https://github.com/felangel/mason)
