@@ -88,7 +88,10 @@ extension BuildContextExt on BuildContext {
   }
 
   /// Same as [bottomsheet] but with a widget builder.
-  Future<T?> bottomsheetBuilder<T>(WidgetBuilder builder) {
+  Future<T?> bottomsheetBuilder<T>(
+    WidgetBuilder builder, {
+    Color? barrierColor,
+  }) {
     return showModalBottomSheet<T?>(
       context: this,
       builder: builder,
