@@ -4,7 +4,7 @@ version: 0.1.0
 
 homepage: https://github.com/raulmabe/mabe_utils
 repository: https://github.com/raulmabe/mabe_utils
-issue_tracker: httpshttps://github.com/raulmabe/mabe_utils/issues
+issue_tracker: https://github.com/raulmabe/mabe_utils/issues
 documentation: https://github.com/raulmabe/mabe_utils
 topics: [utils, extensions, widgets]
 
