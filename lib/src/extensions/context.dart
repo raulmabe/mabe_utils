@@ -87,27 +87,30 @@ extension BuildContextExt on BuildContext {
     return resp ?? AppDialogAction.cancel;
   }
 
-  // Future<T?> bottomsheetBuilder<T>(WidgetBuilder builder) {
-  //   return showCupertinoModalBottomSheet<T?>(
-  //     context: this,
-  //     builder: builder,
-  //     useRootNavigator: true,
-  //   );
-  // }
+  /// Same as [bottomsheet] but with a widget builder.
+  Future<T?> bottomsheetBuilder<T>(WidgetBuilder builder) {
+    return showModalBottomSheet<T?>(
+      context: this,
+      builder: builder,
+      useRootNavigator: true,
+      clipBehavior: Clip.none,
+      barrierColor: barrierColor,
+      backgroundColor: Colors.transparent,
+    );
+  }
 
-  // Future<T?> bottomsheet<T>(Widget child) {
-  //   return showCupertinoModalBottomSheet<T?>(
-  //     context: this,
-  //     builder: (context) => Padding(
-  //       padding: const EdgeInsets.only(top: 20),
-  //       child: child,
-  //     ),
-  //     elevation: 0,
-  //     useRootNavigator: true,
-  //     clipBehavior: Clip.none,
-  //     shadow: const BoxShadow(color: Colors.transparent),
-  //     barrierColor: appTheme.background.withOpacity(.9),
-  //     backgroundColor: Colors.transparent,
-  //   );
-  // }
+  /// Shows a BottomSheet with [child] as a child.
+  Future<T?> bottomsheet<T>(Widget child, {Color? barrierColor}) {
+    return showModalBottomSheet<T?>(
+      context: this,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: child,
+      ),
+      useRootNavigator: true,
+      clipBehavior: Clip.none,
+      barrierColor: barrierColor,
+      backgroundColor: Colors.transparent,
+    );
+  }
 }
