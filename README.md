@@ -18,37 +18,207 @@ dart pub add mabe_utils
 
 ---
 
-## Continuous Integration 🤖
+## Widgets
 
-Mabe Utils comes with a built-in [GitHub Actions workflow][github_actions_link] powered by [Very Good Workflows][very_good_workflows_link] but you can also add your preferred CI/CD solution.
+- ReactOnTap
+  - Scale
+  - Opacity [Pending]
+- Disabled
+  - Marks `child` as disabled by reducing its opacity to half and ignoring pointers.
+- KeyboardHeightProvider
+  - When added to the widget tree, keeps track of the keyboard height and provides these values through the context via `context.maxKeyboardHeight` or `context.keyboardHeight`
+- LoadingManager
+  - Adds an overlay on top of all the sub-widget tree when loading. Allows to add loading tasks
+- AlertManager
+  - `AlertManager` which provides functionality to add or remove alerts above the sub-widget tree. Use it like `context.alert(msg: msg)`
 
-Out of the box, on each pull request and push, the CI `formats`, `lints`, and `tests` the code. This ensures the code remains consistent and behaves correctly as you add functionality or make changes. The project uses [Very Good Analysis][very_good_analysis_link] for a strict set of analysis options used by our team. Code coverage is enforced using the [Very Good Workflows][very_good_coverage_link].
+## Types
 
----
+```jsx
+/// Map of keys and values of type String
+typedef StringMap = Map<String, String>;
 
-## Running Tests 🧪
+/// Map of String keys and dynamic values.
+typedef JSON = Map<String, dynamic>;
 
-For first time users, install the [very_good_cli][very_good_cli_link]:
+/// [VoidCallback] that returns a [Future]
+typedef FutureVoidCallback = Future<void> Function();
 
-```sh
-dart pub global activate very_good_cli
+/// Callback that accepts an [int] through parameters
+typedef IntCallback = void Function(int);
+
+/// Callback that accepts an [String] through parameters
+typedef StringCallback = void Function(String value);
+
+/// Callback that accepts an [BuildContext] through parameters
+typedef VoidContextCallback = void Function(BuildContext context);
+
+/// Callback for bottomsheet builders
+typedef BottomSheetBuilder = Future<T?> Function<T>(Widget child);
 ```
 
-To run all unit tests:
+## Extensions
 
-```sh
-very_good test --coverage
+**Iterables & Lists**
+
+```dart
+List<T> removeNull()
+
+List<T> reverseIf(bool b);
+T after(T value);
+List<T> separateBy(T separator, {bool wrap = false});
+Iterable<T> hugBy(T hugger);
+Iterable<S> indexedMap<S>(S Function(T item, int index) map);
+Iterable<T> putIfAbsent(T value, {EqualityBuilder<T>? equalityBuilder});
+
+/// Adds or removes the [value] based on if the value was already in.
+List<T> toggle(T value);
+
+/// Returns `true` if the iterable is has an element of type [S].
+bool anyType<S extends T>();
+
+/// Extract one random item from the list
+T random();
+
+/// Extract random items from the list
+List<T> randomSublist(int count);
+
+/// The contrary version of [whereType]. Returns a new
+/// list composed of only the elements that are **NOT** of type [S].
+List<T> whereTypeNot<S extends T>();
+
+/// Same as [whereType] but with a pair of types.
+List<T> whereTypes<S extends T, R extends T>();
+
+/// The first element satisfying [test], or `null` if there are none.
+T? firstWhereOrNull(bool Function(T element) test);
+
+/// Returns the last element, and returns null on empty.
+T? get lastOrNull;
+
+/// Returns the first element, and returns null on empty.
+T? get firstOrNull;
+
+/// Returns a map groupped by the [keyFunction].
+Map<K, List<T>> groupBy<K>(K Function(T) keyFunction);
+
+/// Returns the element at position [index] % [length].
+T loop(int index);
+
+/// Returns the element at index [i] if present. Returns null otherwise
+T? elementAtOrNull(int i);
+
+/// Contiguous slices of `this` with the given [length].
+///
+/// Each slice is [length] elements long, except for the last one which may be
+/// shorter if `this` contains too few elements. Each slice begins after the
+/// last one ends. The [length] must be greater than zero.
+///
+/// For example, `{1, 2, 3, 4, 5}.slices(2)` returns `([1, 2], [3, 4], [5])`.
+Iterable<List<T>> slices(int length);
+
 ```
 
-To view the generated coverage report you can use [lcov](https://github.com/linux-test-project/lcov).
+**Context**
 
-```sh
-# Generate Coverage Report
-genhtml coverage/lcov.info -o coverage/
+```dart
+/// Equivalent as `Navigator.of(context)`
+  NavigatorState get navigator => Navigator.of(this);
 
-# Open Coverage Report
-open coverage/index.html
+  /// Equivalent as `MediaQuery.sizeOf(context)`
+  Size get screen => MediaQuery.sizeOf(this);
+
+  /// Equivalent as `MediaQuery.of(context)`
+  MediaQueryData get mediaQuery => MediaQuery.of(this);
+
+  /// Returns padding for the nearest MediaQuery ancestor or
+  /// throws an exception, if no such ancestor exists.
+  EdgeInsets get padding => MediaQuery.paddingOf(this);
+
+  /// Equivalent as `Theme.of(context)`
+  ThemeData get theme => Theme.of(this);
+
+  /// Returns the current [LayoutBreakpoint] based on screen device size.
+  LayoutBreakpoint get breakpoint;
+
+  /// Returns `true` if screen device size is [LayoutBreakpoint.mobile]
+  bool get isMobile;
+
+  /// Returns `true` if screen device size is [LayoutBreakpoint.tablet]
+  bool get isTablet;
+
+  /// Returns `true` if screen device size is [LayoutBreakpoint.desktop]
+  bool get isDesktop;
+
+  /// Returns a ValueNotifier that fires everytime
+  /// the **max** keyboard height changes.
+  ValueNotifier<double> get maxKeyboardHeight;
+
+  /// Returns a ValueNotifier that fires everytime the keyboard height changes.
+  ValueNotifier<double> get keyboardHeight;
+
+  /// Returns the closest [KeyboardHeightProvider] to the tree if any,
+  KeyboardHeightProviderState? get maybeKeyboardHeightProvider;
+
+  // * Managers
+  /// Adds an overlay while this task is being executed.
+  void showLoading({required String tag, String? message});
+
+  /// Removes the tasks, and subsequently the loading overlay.
+  void hideLoading({required String tag});
+
+  /// Adds a new alert.
+  void alert({
+    required String msg,
+    AlertType? type,
+    String? id,
+    Duration? duration,
+  });
+
+  /// It shows a Dialog and will the corresponding [AppDialogAction].
+  Future<AppDialogAction> popup(
+    Widget dialog, {
+    Color? barrierColor,
+    bool? isDismissable,
+  });
+
+	/// Same as [bottomsheet] but with a widget builder.
+  Future<T?> bottomsheetBuilder<T>(WidgetBuilder builder,{Color? barrierColor});
+
+  /// Shows a BottomSheet with [child] as a child.
+  Future<T?> bottomsheet<T>(Widget child, {Color? barrierColor});
 ```
+
+**GlobalKey**
+
+```dart
+ 	/// Returns the global offset of the widget attached to this key.
+  Offset? get offset;
+
+  /// Returns the size of the widget attached to this key.
+  Size? get size;
+
+  /// Returns a Rect of this widget based on the global offset and its size.
+  Rect? get rect;
+```
+
+**String**
+
+```dart
+ Color get color;
+
+	/// Returns the initial letter of each word
+  String get initials;
+
+  /// Returns the same string but the first letter is uppercase.
+  String get capitalized;
+
+  /// Transforms a camel case to a sentence case.
+  /// Example: camelToSentence -> Camel To Sentence
+  String get camelCaseToSentenceCase;
+```
+
+And more ✨
 
 [flutter_install_link]: https://docs.flutter.dev/get-started/install
 [github_actions_link]: https://docs.github.com/en/actions/learn-github-actions
