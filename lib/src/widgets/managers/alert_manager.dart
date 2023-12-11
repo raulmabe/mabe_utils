@@ -21,6 +21,11 @@ class AlertManager extends StatefulWidget {
   static AlertManagerState of(BuildContext context) =>
       context.findAncestorStateOfType<AlertManagerState>()!;
 
+  /// Returns the [AlertManagerState] object of the nearest ancestor (if any)
+  ///[StatefulWidget] widget.
+  static AlertManagerState? maybeOf(BuildContext context) =>
+      context.findAncestorStateOfType<AlertManagerState>();
+
   /// Widget [child]
   final Widget child;
 
@@ -102,7 +107,7 @@ class AlertManagerState extends State<AlertManager>
   }
 
   /// Dismisses the current alert
-  void dismiss(Key key) {
+  void dismiss() {
     _animationController.animateTo(1, duration: Duration.zero);
   }
 

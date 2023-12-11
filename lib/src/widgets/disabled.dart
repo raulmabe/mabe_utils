@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mabe_utils/src/types/types.dart';
+import 'package:mabe_utils/mabe_utils.dart';
 import 'package:sprung/sprung.dart';
 
 /// Marks [child] as disabled by reducing its opacity to half and ignoring
@@ -11,6 +11,7 @@ class Disabled extends StatelessWidget {
     required this.child,
     super.key,
     this.onDisabledTapped,
+    this.reason,
     this.isDisabled = true,
   });
 
@@ -23,10 +24,22 @@ class Disabled extends StatelessWidget {
   /// Callback fired when the child is tapped while disabled.
   final VoidContextCallback? onDisabledTapped;
 
+  /// Reason to inform the user on why is this widget disabled. If not null,
+  /// when tapping into a disabled widget it will show an alert
+  /// through the closest ancestor of type [AlertManager]
+  final String? reason;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isDisabled ? () => onDisabledTapped?.call(context) : null,
+      onTap: isDisabled
+          ? () {
+              onDisabledTapped?.call(context);
+              if (reason == null) return;
+              final alertManager = AlertManager.maybeOf(context);
+              alertManager?.alert(msg: reason!);
+            }
+          : null,
       child: AnimatedOpacity(
         opacity: isDisabled ? 0.5 : 1,
         duration: const Duration(milliseconds: 300),

@@ -24,6 +24,8 @@ dart pub add mabe_utils
 
 ## Widgets
 
+Look at the `example` folder to check how to work with these widgets.
+
 - ReactOnTap
   - Scale
   - Opacity [Pending]
@@ -69,10 +71,15 @@ typedef BottomSheetBuilder = Future<T?> Function<T>(Widget child);
 List<T> removeNull()
 
 List<T> reverseIf(bool b);
+
 T after(T value);
+
 List<T> separateBy(T separator, {bool wrap = false});
+
 Iterable<T> hugBy(T hugger);
+
 Iterable<S> indexedMap<S>(S Function(T item, int index) map);
+
 Iterable<T> putIfAbsent(T value, {EqualityBuilder<T>? equalityBuilder});
 
 /// Adds or removes the [value] based on if the value was already in.
@@ -126,7 +133,7 @@ Iterable<List<T>> slices(int length);
 **Context**
 
 ```dart
-/// Equivalent as `Navigator.of(context)`
+  /// Equivalent as `Navigator.of(context)`
   NavigatorState get navigator => Navigator.of(this);
 
   /// Equivalent as `MediaQuery.sizeOf(context)`
