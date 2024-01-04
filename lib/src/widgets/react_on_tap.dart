@@ -12,6 +12,7 @@ class ReactOnTap extends StatefulWidget {
     this.forceScale = false,
     this.duration = const Duration(milliseconds: 100),
     this.factorScale = .97,
+    this.opacity = .5,
     this.alignment = Alignment.center,
     this.behavior = HitTestBehavior.deferToChild,
     this.padding,
@@ -44,6 +45,9 @@ class ReactOnTap extends StatefulWidget {
   /// Allows to customize the amount of scale when animating.
   final double factorScale;
 
+  /// Allows to customize the amount of opacity when animating.
+  final double opacity;
+
   /// Sets the animation duration.
   final Duration duration;
 
@@ -55,6 +59,7 @@ class _ReactOnTapState extends State<ReactOnTap>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scale;
+  late Animation<double> _opacity;
   late final CurvedAnimation _curvedAnimation;
 
   @override
@@ -66,6 +71,8 @@ class _ReactOnTapState extends State<ReactOnTap>
     _curvedAnimation =
         CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
 
+    _opacity = Tween<double>(begin: 1, end: widget.opacity)
+        .animate(_animationController);
     _scale = Tween<double>(
       begin: 1,
       end: 1,
@@ -106,7 +113,10 @@ class _ReactOnTapState extends State<ReactOnTap>
               return Transform.scale(
                 scale: _scale.value,
                 alignment: widget.alignment,
-                child: child,
+                child: Opacity(
+                  opacity: _opacity.value,
+                  child: child,
+                ),
               );
             },
             child: widget.child,
@@ -116,14 +126,17 @@ class _ReactOnTapState extends State<ReactOnTap>
     );
   }
 
-  void _onTapDown(_) => animate(widget.factorScale);
-  void _onTapUp(_) => animate(1);
+  void _onTapDown(_) => animate(widget.factorScale, widget.opacity);
+  void _onTapUp(_) => animate(1, 1);
 
-  void animate(double scale) {
+  void animate(double scale, double opacity) {
     if (!mounted) return;
     _animationController.stop();
 
     _scale = Tween<double>(begin: _scale.value, end: scale).animate(
+      _curvedAnimation,
+    );
+    _opacity = Tween<double>(begin: _opacity.value, end: opacity).animate(
       _curvedAnimation,
     );
 

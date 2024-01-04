@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mabe_utils/mabe_utils.dart';
 
@@ -124,6 +126,46 @@ class HomePage extends StatelessWidget {
               },
               child: const Text('Show Loading'),
             ),
+            MabeOverlay(
+              overlayDecoration: const BoxDecoration(
+                color: Colors.indigo,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.indigo,
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              overlayBuilder: (context, show, remove, isOpen) => SizedBox(
+                width: context.screen.width * .5,
+                child: const Text(
+                  'This is an overlay. Automatically dismisses when tapping outside',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              child: (context, show, remove, isOpen) => ElevatedButton(
+                onPressed: !isOpen ? show : null,
+                child: const Text('Show Loading'),
+              ),
+            ),
+            DetectTextOverflowBuilder(
+              text: const Text(
+                'This is a long text that does overflow, so it does not show the whole content',
+                maxLines: 1,
+              ),
+              builder: (ctx, hasOverflowed) =>
+                  Text('The text I introduced has overflowed? $hasOverflowed'),
+            ),
+            ReactOnTap(
+              onTap: () {
+                log('Reacting on Tap');
+              },
+              child: Container(
+                height: 100,
+                decoration: const BoxDecoration(color: Colors.pink),
+              ),
+            ),
           ].gap(20),
         ),
       ),
@@ -135,32 +177,48 @@ class Alert extends StatelessWidget {
   const Alert({
     super.key,
     required this.data,
+    this.backgroundColor,
+    this.style,
   });
 
+  final Color? backgroundColor;
+  final TextStyle? style;
   final AlertData data;
 
   @override
   Widget build(BuildContext context) {
-    return ReactOnTap(
-      onTap: () {
-        AlertManager.of(context).dismiss();
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
-        decoration: BoxDecoration(
-            color: switch (data.type) {
-              _ => Colors.blue.shade100,
-            },
-            borderRadius: BorderRadius.circular(16)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Row(
-          children: [
-            Icon(switch (data.type) {
-              AlertType.success => Icons.check_circle_rounded,
-              _ => Icons.info,
-            }),
-            Expanded(child: Text(data.message))
-          ].gap(16),
+    return Dismissible(
+      key: ValueKey(data.id),
+      direction: DismissDirection.up,
+      onDismissed: (_) => AlertManager.of(context).dismiss(),
+      child: ReactOnTap(
+        onTap: () {
+          AlertManager.of(context).dismiss();
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+          decoration: BoxDecoration(
+              color: backgroundColor ??
+                  switch (data.type) {
+                    AlertType.error => Colors.red.shade100,
+                    AlertType.success => Colors.green.shade100,
+                    _ => Colors.blue.shade100,
+                  },
+              borderRadius: BorderRadius.circular(16)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            children: [
+              Icon(switch (data.type) {
+                AlertType.success => Icons.check_circle_rounded,
+                _ => Icons.info,
+              }),
+              Expanded(
+                  child: Text(
+                data.message,
+                style: style,
+              ))
+            ].gap(16),
+          ),
         ),
       ),
     );

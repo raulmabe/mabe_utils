@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:flutter/widgets.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 /// Common Operations for Iterables with nullable items.
@@ -180,6 +181,52 @@ extension IterableWidgetExt on Iterable<Widget> {
   /// Adds a [Gap] widget between each element of the list.
   List<Widget> gap(double x, {bool wrap = false}) {
     return separateBy(Gap(x), wrap: wrap).toList();
+  }
+
+  /// Adds a borderRadius as it would be added if
+  /// the whole list is a full Widget.
+  List<Widget> borderRadius(double radius) {
+    final list = toList();
+    switch (length) {
+      case 0:
+        return list;
+      case 1:
+        return [
+          ClipRRect(
+            borderRadius: SmoothBorderRadius(cornerRadius: radius),
+            child: Material(
+              type: MaterialType.transparency,
+              child: first,
+            ),
+          ),
+        ];
+      case _:
+        final elementsBetween = <Widget>[];
+        for (var i = 1; i < length - 1; ++i) {
+          elementsBetween.add(list[i]);
+        }
+        return [
+          ClipRRect(
+            borderRadius: SmoothBorderRadius.vertical(
+              top: SmoothRadius(cornerRadius: radius, cornerSmoothing: 1),
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: first,
+            ),
+          ),
+          ...elementsBetween,
+          ClipRRect(
+            borderRadius: SmoothBorderRadius.vertical(
+              bottom: SmoothRadius(cornerRadius: radius, cornerSmoothing: 1),
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: last,
+            ),
+          ),
+        ];
+    }
   }
 }
 

@@ -1,5 +1,7 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: unused_element
+
 import 'package:flutter/material.dart';
+import 'package:mabe_utils/mabe_utils.dart';
 
 /// [AlertManager] which provides functionalty to add or remove alerts above
 /// the subwidget tree.
@@ -12,7 +14,7 @@ class AlertManager extends StatefulWidget {
   /// Use it like `context.alert(msg: msg)`
   const AlertManager({
     required this.child,
-    required this.alertBuilder,
+    this.alertBuilder = defaultAlertBuilder,
     super.key,
   });
 
@@ -175,3 +177,62 @@ typedef AlertData = ({
   String message,
   Duration duration
 });
+
+/// Default alert builder to easily set it up
+Widget defaultAlertBuilder(AlertData data) => _Alert(data: data);
+
+class _Alert extends StatelessWidget {
+  const _Alert({
+    required this.data,
+    super.key,
+    this.backgroundColor,
+    this.style,
+  });
+
+  final Color? backgroundColor;
+  final TextStyle? style;
+  final AlertData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dismissible(
+      key: ValueKey(data.id),
+      direction: DismissDirection.up,
+      onDismissed: (_) => AlertManager.of(context).dismiss(),
+      child: ReactOnTap(
+        onTap: () {
+          AlertManager.of(context).dismiss();
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+          decoration: BoxDecoration(
+            color: backgroundColor ??
+                switch (data.type) {
+                  AlertType.error => Colors.red.shade100,
+                  AlertType.success => Colors.green.shade100,
+                  _ => Colors.blue.shade100,
+                },
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            children: [
+              Icon(
+                switch (data.type) {
+                  AlertType.success => Icons.check_circle_rounded,
+                  _ => Icons.info,
+                },
+              ),
+              Expanded(
+                child: Text(
+                  data.message,
+                  style: style,
+                ),
+              ),
+            ].gap(16),
+          ),
+        ),
+      ),
+    );
+  }
+}
