@@ -24,8 +24,16 @@ dart pub add mabe_utils
 
 ## Widgets
 
-Look at the `example` folder to check how to work with these widgets.
+Look at the [example folder](/example/lib/main.dart) to check how to work with these widgets.
 
+- MabeOverlay
+  - `MabeOverlay` is a StatefulWidget that creates a custom overlay widget. It allows for the display of an overlay widget above other widgets, with customizable positioning and behavior.
+- Storyboard
+  - Scaffold for Instagram Stories like content.
+- DetectTextOverflowBuilder
+  - Exposes a `itemBuilder` to build a widget based on if text rendered has exceeded its space. It doesn't actually render the Text on the screen.
+- AppLifeCycleListener
+  - Exposes callbacks for every life cycle method of the app (onResumed, onBackground, onPause, etc.)
 - ReactOnTap
   - Scale
   - Opacity [Pending]
@@ -37,6 +45,11 @@ Look at the `example` folder to check how to work with these widgets.
   - Adds an overlay on top of all the sub-widget tree when loading. Allows to add loading tasks
 - AlertManager
   - `AlertManager` which provides functionality to add or remove alerts above the sub-widget tree. Use it like `context.alert(msg: msg)`
+
+## Mixins
+
+- RouteAwareSubscriptionMixin - [Usage](docs/mixins/route_aware_subscription_mixin.md)
+  - Add a provider, and a mixin and automatically subscribes/unsubscribes to the Flutter Navigation. This allows to override methods like `didPop` or `didPush`.
 
 ## Types
 
@@ -68,7 +81,9 @@ typedef BottomSheetBuilder = Future<T?> Function<T>(Widget child);
 **Iterables & Lists**
 
 ```dart
-List<T> removeNull()
+List<Widget> borderRadius(double radius);
+
+List<T> removeNull();
 
 List<T> reverseIf(bool b);
 
