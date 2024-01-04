@@ -1,6 +1,6 @@
 name: mabe_utils
 description: Utility widgets, extension methods and types used on every app developed by me (https://raulmabe.dev)
-version: 0.1.1
+version: 0.2.0-pre
 
 homepage: https://github.com/raulmabe/mabe_utils
 repository: https://github.com/raulmabe/mabe_utils
@@ -13,9 +13,12 @@ environment:
   flutter: ">=3.10.0"
 
 dependencies:
+  figma_squircle: ^0.5.3
   flutter:
     sdk: flutter
   gap: ^3.0.1
+  modal_bottom_sheet: ^3.0.0-pre
+  provider: ^6.1.1
   sprung: ^3.0.1
 
 dev_dependencies:
