@@ -71,8 +71,7 @@ extension IterableExt<T> on Iterable<T> {
     T value, {
     EqualityBuilder<T>? equalityBuilder,
   }) {
-    final containsValue =
-        equalityBuilder != null ? any(equalityBuilder) : contains(value);
+    final containsValue = equalityBuilder != null ? any(equalityBuilder) : contains(value);
     if (containsValue) {
       return this;
     } else {
@@ -111,8 +110,7 @@ extension IterableExt<T> on Iterable<T> {
   List<T> whereTypeNot<S extends T>() {
     final extracted = whereType<S>();
     return [
-      for (final element in this)
-        extracted.cast<T>().contains(element) ? null : element,
+      for (final element in this) extracted.cast<T>().contains(element) ? null : element,
     ].removeNull().cast<T>();
   }
 
@@ -143,8 +141,7 @@ extension IterableExt<T> on Iterable<T> {
   /// Returns a map groupped by the [keyFunction].
   Map<K, List<T>> groupBy<K>(K Function(T) keyFunction) => fold(
         <K, List<T>>{},
-        (Map<K, List<T>> map, T element) =>
-            map..putIfAbsent(keyFunction(element), () => <T>[]).add(element),
+        (Map<K, List<T>> map, T element) => map..putIfAbsent(keyFunction(element), () => <T>[]).add(element),
       );
 
   /// Returns the element at position [index] % [length].
@@ -171,6 +168,19 @@ extension IterableExt<T> on Iterable<T> {
       }
       yield slice;
     }
+  }
+
+  /// Transforms an iterable like:
+  /// duplicate(3): [a,b] => [a,b,a,b,a,b]
+  /// duplicate(2): [a,b] => [a,b,a,b]
+  /// duplicate(1): [a,b] => [a,b]
+  /// duplicate(0): [a,b] => []
+  List<T> duplicate(int x) {
+    var l = <T>[];
+    for (var i = 0; i < x; ++i) {
+      l = [...l, ...this];
+    }
+    return l;
   }
 }
 
@@ -274,5 +284,17 @@ extension IterableListExt<T> on Iterable<List<T>> {
       l.addAll(item);
     }
     return l;
+  }
+}
+
+/// Common extensions for iterables composed of enums
+extension EnumByName<T extends Enum> on Iterable<T> {
+  /// Returns the enum with name same as [name].
+  /// Null otherwise
+  T? byNameOrNull(String name) {
+    for (final value in this) {
+      if (value.name == name) return value;
+    }
+    return null;
   }
 }

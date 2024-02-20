@@ -11,11 +11,7 @@ typedef OverlayBuilder = Widget Function(
 );
 
 /// Typedef for the overlay alignment
-typedef OverlayAlignment = ({
-  Alignment targetAnchor,
-  Alignment followerAnchor,
-  Offset? offset
-});
+typedef OverlayAlignment = ({Alignment targetAnchor, Alignment followerAnchor, Offset? offset});
 
 /// `MabeOverlay` is a StatefulWidget that creates a custom overlay widget.
 /// It allows for the display of an overlay widget above other widgets,
@@ -39,11 +35,7 @@ class MabeOverlay extends StatefulWidget {
     this.barrierColor,
     this.overlayPadding,
     this.onDismissed,
-    this.alignment = (
-      followerAnchor: Alignment.bottomCenter,
-      targetAnchor: Alignment.topCenter,
-      offset: null
-    ),
+    this.alignment = (followerAnchor: Alignment.bottomCenter, targetAnchor: Alignment.topCenter, offset: null),
     this.animationDuration = const Duration(milliseconds: 250),
   });
 
@@ -120,13 +112,9 @@ class _AwesomeOverlayState extends State<MabeOverlay> {
             children: [
               CompositedTransformFollower(
                 link: _layerLink,
-                offset: alignment?.offset ??
-                    widget.alignment.offset ??
-                    const Offset(0, -20),
-                targetAnchor:
-                    alignment?.targetAnchor ?? widget.alignment.targetAnchor,
-                followerAnchor: alignment?.followerAnchor ??
-                    widget.alignment.followerAnchor,
+                offset: alignment?.offset ?? widget.alignment.offset ?? const Offset(0, -20),
+                targetAnchor: alignment?.targetAnchor ?? widget.alignment.targetAnchor,
+                followerAnchor: alignment?.followerAnchor ?? widget.alignment.followerAnchor,
                 child: buildOverlay(ctx, alignment),
               ),
             ],
@@ -173,8 +161,7 @@ class _AwesomeOverlayState extends State<MabeOverlay> {
       builder: (context, value, child) {
         return Transform.scale(
           scale: value,
-          alignment:
-              alignment?.followerAnchor ?? widget.alignment.followerAnchor,
+          alignment: alignment?.followerAnchor ?? widget.alignment.followerAnchor,
           child: child,
         );
       },
@@ -184,8 +171,7 @@ class _AwesomeOverlayState extends State<MabeOverlay> {
           borderRadius: widget.overlayDecoration?.borderRadius,
           type: MaterialType.transparency,
           child: ClipRRect(
-            borderRadius:
-                widget.overlayDecoration?.borderRadius ?? BorderRadius.zero,
+            borderRadius: widget.overlayDecoration?.borderRadius ?? BorderRadius.zero,
             child: Padding(
               padding: widget.overlayPadding ?? const EdgeInsets.all(8),
               child: ListenableBuilder(
@@ -210,8 +196,7 @@ class _AwesomeOverlayState extends State<MabeOverlay> {
       link: _layerLink,
       child: ListenableBuilder(
         listenable: _isOpen,
-        builder: (context, _) =>
-            widget.child(context, showOverlay, removeOverlay, _isOpen.value),
+        builder: (context, _) => widget.child(context, showOverlay, removeOverlay, _isOpen.value),
       ),
     );
   }

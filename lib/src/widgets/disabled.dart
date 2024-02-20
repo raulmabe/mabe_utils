@@ -31,22 +31,25 @@ class Disabled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isDisabled
-          ? () {
-              onDisabledTapped?.call(context);
-              if (reason == null) return;
-              final alertManager = AlertManager.maybeOf(context);
-              alertManager?.alert(msg: reason!);
-            }
-          : null,
-      child: AnimatedOpacity(
-        opacity: isDisabled ? 0.5 : 1,
-        duration: const Duration(milliseconds: 300),
-        curve: Sprung.underDamped,
-        child: AbsorbPointer(
-          absorbing: isDisabled,
-          child: child,
+    return MouseRegion(
+      cursor: isDisabled ? SystemMouseCursors.forbidden : MouseCursor.defer,
+      child: GestureDetector(
+        onTap: isDisabled
+            ? () {
+                onDisabledTapped?.call(context);
+                if (reason == null) return;
+                final alertManager = AlertManager.maybeOf(context);
+                alertManager?.alert(msg: reason!);
+              }
+            : null,
+        child: AnimatedOpacity(
+          opacity: isDisabled ? 0.5 : 1,
+          duration: const Duration(milliseconds: 300),
+          curve: Sprung.underDamped,
+          child: AbsorbPointer(
+            absorbing: isDisabled,
+            child: child,
+          ),
         ),
       ),
     );

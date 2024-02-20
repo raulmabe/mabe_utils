@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:mabe_utils/mabe_utils.dart';
 
 /// Adds an overlay on top of all the subwidget tree when loading.
 /// Allows to add loading tasks
@@ -17,11 +18,10 @@ class LoaderManager extends StatefulWidget {
   final Widget child;
 
   /// Overlay builder
-  final WidgetBuilder loadingOverlay;
+  final Widget Function(BuildContext context, bool isLoading, StringMap tasks) loadingOverlay;
 
   /// Returns the closest [LoaderManagerState] up in the widget tree.
-  static LoaderManagerState of(BuildContext context) =>
-      context.findAncestorStateOfType<LoaderManagerState>()!;
+  static LoaderManagerState of(BuildContext context) => context.findAncestorStateOfType<LoaderManagerState>()!;
 
   @override
   State<LoaderManager> createState() => LoaderManagerState();
@@ -29,32 +29,47 @@ class LoaderManager extends StatefulWidget {
 
 /// [LoaderManager] state
 class LoaderManagerState extends State<LoaderManager> {
-  late Map<String, String> _loadingTasks;
+  late StringMap _loadingTasks;
+  late final ValueNotifier<bool> _rebuildManager;
 
   @override
   void initState() {
     super.initState();
+    _rebuildManager = ValueNotifier(false);
     _loadingTasks = {};
   }
 
+  bool get _isLoading => _loadingTasks.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
-    final isLoading = _loadingTasks.isNotEmpty;
     return Stack(
       children: [
-        IgnorePointer(
-          ignoring: isLoading,
+        ValueListenableBuilder(
+          valueListenable: _rebuildManager,
+          builder: (context, _, child) => IgnorePointer(
+            ignoring: _isLoading,
+            child: child,
+          ),
           child: widget.child,
         ),
-        if (isLoading)
-          Positioned.fill(
-            child: IgnorePointer(
-              ignoring: isLoading,
-              child: widget.loadingOverlay(context),
+        Positioned.fill(
+          child: ValueListenableBuilder(
+            valueListenable: _rebuildManager,
+            builder: (context, _, child) => IgnorePointer(
+              ignoring: !_isLoading,
+              child: widget.loadingOverlay(context, _isLoading, _loadingTasks),
             ),
           ),
+        ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _rebuildManager.dispose();
+    super.dispose();
   }
 
   /// Adds an overlay while this task is being executed.
@@ -62,7 +77,7 @@ class LoaderManagerState extends State<LoaderManager> {
     _loadingTasks.putIfAbsent(tag, () => message ?? 'Loading...');
     assert(_loadingTasks.containsKey(tag), 'The task $tag was already loading');
     log('LoaderManager: $tag added');
-    setState(() {});
+    _rebuild();
   }
 
   /// Removes the tasks, and subsequently the loading overlay.
@@ -70,6 +85,8 @@ class LoaderManagerState extends State<LoaderManager> {
     final modified = _loadingTasks.remove(tag);
     assert(modified != null, 'The task $tag was not loading');
     log('LoaderManager: $tag removed');
-    setState(() {});
+    _rebuild();
   }
+
+  void _rebuild() => _rebuildManager.value = !_rebuildManager.value;
 }

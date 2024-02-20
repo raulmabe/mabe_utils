@@ -10,8 +10,7 @@ extension StringExt on String {
       return name.split(' ').map((l) => l[0]).take(2).join().toUpperCase();
     }
     if (name.split(' ')[0].length > 1) {
-      return name.split(' ')[0][0].toUpperCase() +
-          name.split(' ')[0][1].toUpperCase();
+      return name.split(' ')[0][0].toUpperCase() + name.split(' ')[0][1].toUpperCase();
     }
     return name.split(' ')[0].toUpperCase();
   }
@@ -46,4 +45,10 @@ extension StringColor on String {
     number = (number % 240) * 1.5;
     return HSLColor.fromColor(Colors.blue).withHue(number).toColor();
   }
+}
+
+/// Color related nullable String Extensions
+extension OptionalStringExt on String? {
+  /// Returns true if this is null or empty. False otherwise
+  bool get isNullOrEmpty => (this == null) || this!.isEmpty;
 }

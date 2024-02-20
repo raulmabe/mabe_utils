@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 /// `BottomSheetPage` is a custom page class that integrates with
@@ -14,7 +14,10 @@ class BottomSheetPage<T> extends Page<T> {
   const BottomSheetPage({
     required this.child,
     this.isDismissible = true,
+    this.isExpanded = true,
+    this.modalBarrierColor,
     this.duration,
+    this.overlayStyle,
   });
 
   /// The widget to display inside the bottom sheet.
@@ -37,14 +40,24 @@ class BottomSheetPage<T> extends Page<T> {
   /// and closing the bottom sheet.
   final Duration? duration;
 
+  /// Color for the barrier. Defaults to Color.black12
+  final Color? modalBarrierColor;
+
+  /// Overlay Style
+  final SystemUiOverlayStyle? overlayStyle;
+
+  /// Forces the widget to be expanded when true.
+  final bool isExpanded;
+
   @override
-  Route<T> createRoute(BuildContext context) =>
-      CupertinoModalBottomSheetRoute<T>(
+  Route<T> createRoute(BuildContext context) => CupertinoModalBottomSheetRoute<T>(
         builder: (context) => child,
-        expanded: true,
+        expanded: isExpanded,
         isDismissible: isDismissible,
         enableDrag: isDismissible,
+        modalBarrierColor: modalBarrierColor,
         settings: this,
         duration: duration,
+        overlayStyle: overlayStyle,
       );
 }

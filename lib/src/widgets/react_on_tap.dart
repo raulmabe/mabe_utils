@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Adds a reaction to the [child] widget when tapped.
 class ReactOnTap extends StatefulWidget {
-  /// Adds a reaction to the [child] widget when tapped.
+  /// Adds a scale and opacity animation to the [child] widget when tapped.
   const ReactOnTap({
     required this.child,
     super.key,
@@ -17,6 +17,36 @@ class ReactOnTap extends StatefulWidget {
     this.behavior = HitTestBehavior.deferToChild,
     this.padding,
   });
+
+  /// Adds a scale animation to the [child] widget when tapped.
+  const ReactOnTap.scale({
+    required this.child,
+    super.key,
+    this.onTap,
+    this.onDoubleTap,
+    this.onLongTap,
+    this.forceScale = false,
+    this.duration = const Duration(milliseconds: 100),
+    this.factorScale = .97,
+    this.alignment = Alignment.center,
+    this.behavior = HitTestBehavior.deferToChild,
+    this.padding,
+  }) : opacity = 1;
+
+  /// Adds a opacity animation to the [child] widget when tapped.
+  const ReactOnTap.opacity({
+    required this.child,
+    super.key,
+    this.onTap,
+    this.onDoubleTap,
+    this.onLongTap,
+    this.forceScale = false,
+    this.duration = const Duration(milliseconds: 100),
+    this.opacity = .5,
+    this.alignment = Alignment.center,
+    this.behavior = HitTestBehavior.deferToChild,
+    this.padding,
+  }) : factorScale = 1;
 
   /// Widget [child].
   final Widget child;
@@ -55,8 +85,7 @@ class ReactOnTap extends StatefulWidget {
   _ReactOnTapState createState() => _ReactOnTapState();
 }
 
-class _ReactOnTapState extends State<ReactOnTap>
-    with SingleTickerProviderStateMixin {
+class _ReactOnTapState extends State<ReactOnTap> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scale;
   late Animation<double> _opacity;
@@ -65,14 +94,11 @@ class _ReactOnTapState extends State<ReactOnTap>
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: widget.duration);
+    _animationController = AnimationController(vsync: this, duration: widget.duration);
 
-    _curvedAnimation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
+    _curvedAnimation = CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
 
-    _opacity = Tween<double>(begin: 1, end: widget.opacity)
-        .animate(_animationController);
+    _opacity = Tween<double>(begin: 1, end: widget.opacity).animate(_animationController);
     _scale = Tween<double>(
       begin: 1,
       end: 1,
@@ -88,9 +114,7 @@ class _ReactOnTapState extends State<ReactOnTap>
 
   @override
   Widget build(BuildContext context) {
-    final isTappable = widget.onDoubleTap != null ||
-        widget.onTap != null ||
-        widget.onLongTap != null;
+    final isTappable = widget.onDoubleTap != null || widget.onTap != null || widget.onLongTap != null;
     final mustScale = isTappable || widget.forceScale;
 
     if (!mustScale) return widget.child;

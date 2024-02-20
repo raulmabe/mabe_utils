@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         style: theme.textTheme.bodyMedium!,
         child: KeyboardHeightProvider(
           child: LoaderManager(
-            loadingOverlay: (context) => const LoadingOverlay(),
+            loadingOverlay: (context, _, __) => const LoadingOverlay(),
             child: AlertManager(
               child: child!,
               alertBuilder: (alert) => Alert(data: alert),
@@ -154,8 +154,7 @@ class HomePage extends StatelessWidget {
                 'This is a long text that does overflow, so it does not show the whole content',
                 maxLines: 1,
               ),
-              builder: (ctx, hasOverflowed) =>
-                  Text('The text I introduced has overflowed? $hasOverflowed'),
+              builder: (ctx, hasOverflowed) => Text('The text I introduced has overflowed? $hasOverflowed'),
             ),
             ReactOnTap(
               onTap: () {

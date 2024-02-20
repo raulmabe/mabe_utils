@@ -15,18 +15,19 @@ class AlertManager extends StatefulWidget {
   const AlertManager({
     required this.child,
     this.alertBuilder = defaultAlertBuilder,
+    this.alignment = Alignment.topCenter,
+    this.defaultAlertType = AlertType.info,
+    this.defaultDuration = const Duration(seconds: 3),
     super.key,
   });
 
   /// Returns the [AlertManagerState] object of the nearest ancestor
   ///[StatefulWidget] widget.
-  static AlertManagerState of(BuildContext context) =>
-      context.findAncestorStateOfType<AlertManagerState>()!;
+  static AlertManagerState of(BuildContext context) => context.findAncestorStateOfType<AlertManagerState>()!;
 
   /// Returns the [AlertManagerState] object of the nearest ancestor (if any)
   ///[StatefulWidget] widget.
-  static AlertManagerState? maybeOf(BuildContext context) =>
-      context.findAncestorStateOfType<AlertManagerState>();
+  static AlertManagerState? maybeOf(BuildContext context) => context.findAncestorStateOfType<AlertManagerState>();
 
   /// Widget [child]
   final Widget child;
@@ -34,14 +35,22 @@ class AlertManager extends StatefulWidget {
   /// Function that builds the Widget associated to the alert.
   final AlertBuilder alertBuilder;
 
+  /// Alignment to position the alert.
+  final Alignment alignment;
+
+  /// Overrides the default alert type. This AlertType will be used
+  /// when AlertType is not specified.
+  final AlertType defaultAlertType;
+
+  /// Overrides the default alert type.
+  final Duration defaultDuration;
+
   @override
   State<AlertManager> createState() => AlertManagerState();
 }
 
 /// [AlertManager] state
-class AlertManagerState extends State<AlertManager>
-    with SingleTickerProviderStateMixin {
-  final Duration _defaultDuration = const Duration(seconds: 3);
+class AlertManagerState extends State<AlertManager> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late List<AlertData> _alerts;
   bool _isActive = false;
@@ -65,34 +74,29 @@ class AlertManagerState extends State<AlertManager>
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: widget.alignment,
       children: [
         widget.child,
-        Align(
-          alignment: Alignment.topCenter,
-          child: SafeArea(
-            child: AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                _isActive = !(_alerts.length <= 1 &&
-                    _animationController.status == AnimationStatus.completed);
+        SafeArea(
+          child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              _isActive = !(_alerts.length <= 1 && _animationController.status == AnimationStatus.completed);
 
-                return IgnorePointer(
-                  ignoring: !_isActive,
-                  child: AnimatedOpacity(
-                    duration: _fadeDuration,
-                    opacity: _isActive ? 1 : 0,
-                    child: child,
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 4,
+              return IgnorePointer(
+                ignoring: !_isActive,
+                child: AnimatedOpacity(
+                  duration: _fadeDuration,
+                  opacity: _isActive ? 1 : 0,
+                  child: child,
                 ),
-                child: _alerts.isEmpty
-                    ? const SizedBox()
-                    : widget.alertBuilder(_alerts[0]),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 4,
               ),
+              child: _alerts.isEmpty ? const SizedBox() : widget.alertBuilder(_alerts[0]),
             ),
           ),
         ),
@@ -122,7 +126,7 @@ class AlertManagerState extends State<AlertManager>
         if (_alerts.isNotEmpty) {
           final duration = _alerts.isNotEmpty ? _alerts[0].duration : null;
           _animationController
-            ..duration = duration ?? _defaultDuration
+            ..duration = duration ?? widget.defaultDuration
             ..forward(from: 0);
         }
       }),
@@ -142,15 +146,15 @@ class AlertManagerState extends State<AlertManager>
         ..add(
           (
             id: id ?? msg,
-            type: type ?? AlertType.info,
-            duration: duration ?? _defaultDuration,
+            type: type ?? widget.defaultAlertType,
+            duration: duration ?? widget.defaultDuration,
             message: msg,
           ),
         );
     });
 
     _animationController
-      ..duration = duration ?? _defaultDuration
+      ..duration = duration ?? widget.defaultDuration
       ..forward(from: 0);
   }
 }
@@ -171,12 +175,7 @@ enum AlertType {
 typedef AlertBuilder = Widget Function(AlertData data);
 
 /// The data that an Alert needs.
-typedef AlertData = ({
-  String id,
-  AlertType type,
-  String message,
-  Duration duration
-});
+typedef AlertData = ({String id, AlertType type, String message, Duration duration});
 
 /// Default alert builder to easily set it up
 Widget defaultAlertBuilder(AlertData data) => _Alert(data: data);

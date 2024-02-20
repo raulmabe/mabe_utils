@@ -21,8 +21,7 @@ class Storyboard extends StatefulWidget {
   const Storyboard({
     required this.stories,
     this.storyDuration = const Duration(seconds: 3),
-    this.unselectedIndicatorDecoration =
-        const BoxDecoration(color: Colors.white24),
+    this.unselectedIndicatorDecoration = const BoxDecoration(color: Colors.white24),
     this.selectedIndicatorDecoration = const BoxDecoration(color: Colors.white),
     this.indicatorHeight = 3.0,
     this.indicatorGap = 6.0,
@@ -73,8 +72,7 @@ class Storyboard extends StatefulWidget {
   State<Storyboard> createState() => _StoryboardState();
 }
 
-class _StoryboardState extends State<Storyboard>
-    with SingleTickerProviderStateMixin {
+class _StoryboardState extends State<Storyboard> with SingleTickerProviderStateMixin {
   late final AnimationController controller;
 
   late final ValueNotifier<int> index;
@@ -82,9 +80,7 @@ class _StoryboardState extends State<Storyboard>
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(vsync: this, duration: widget.storyDuration)
-          ..addStatusListener(_onControllerStatusChanged);
+    controller = AnimationController(vsync: this, duration: widget.storyDuration)..addStatusListener(_onControllerStatusChanged);
     index = ValueNotifier(0);
 
     if (widget.autoPlay) {
@@ -137,9 +133,7 @@ class _StoryboardState extends State<Storyboard>
 
   @override
   Widget build(BuildContext context) {
-    final headerHeight = (kToolbarHeight / 2) +
-        MediaQuery.viewPaddingOf(context).top +
-        (widget.header?.preferredSize.height ?? 0);
+    final headerHeight = (kToolbarHeight / 2) + MediaQuery.viewPaddingOf(context).top + (widget.header?.preferredSize.height ?? 0);
 
     return Stack(
       children: [
